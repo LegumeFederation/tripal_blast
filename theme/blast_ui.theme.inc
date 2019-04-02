@@ -41,17 +41,15 @@ function blast_ui_preprocess_show_blast_report(&$vars) {
 
     // Add the CSS/JS.
     $cvitjs_lib_path = libraries_get_path('cvitjs') . DIRECTORY_SEPARATOR;
-    drupal_add_css($cvitjs_lib_path . 'js/lib/bootstrap/css/bootstrap.min.css',array('preprocess'=>FALSE));
-    drupal_add_css($cvitjs_lib_path . 'js/lib/hopscotch/css/hopscotch.min.css',array('preprocess'=>FALSE));
-    drupal_add_css($cvitjs_lib_path . 'css/cvit.css',array('preprocess'=> FALSE));
-    drupal_add_js($cvitjs_lib_path . 'js/lib/require/require.js',array('group'=>'JS_LIBRARY','type'=>'file'));
-    drupal_add_js($cvitjs_lib_path . 'js/lib/require/blast_ui-config.js',array('group'=>'JS_THEME'));
-
+    drupal_add_css('https://fonts.googleapis.com/icon?family=Material+Icons');
+    drupal_add_js($cvitjs_lib_path . 'build/cvit.min.js');
+ 
     // Add the JS settings.
     global $base_url;
     drupal_add_js(array('blast_ui'=> array(
             'dataset' => $vars['blast_job']->blastdb->db_name,
-            'gff' => $base_url . '/' . $vars['blast_job']->files->result->gff
+            'gff' => $base_url . '/' . $vars['blast_job']->files->result->gff,
+            'cvitroot' => $base_url.'/'.$cvitjs_lib_path
       )),
       'setting'
     );

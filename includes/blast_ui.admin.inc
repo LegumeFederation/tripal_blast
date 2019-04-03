@@ -188,7 +188,7 @@ KRSLEEGLKTTGEGLDWGVLFGFGPGLTIETVVLRSVAI';
   // Get CViTjs confuration text, if possible.
   if (!$default_value = blast_ui_get_cvit_conf_text()) {
     $default_value = 'Unable to get CViTjs configuration information. '
-                   . 'You will need to enable CViTjs and set and save the '
+                   . 'You will need to enable CViTjs, which will set and save the '
                    . 'path to CViTjs before you can edit the CViTjs configuration text.';
     $disabled = true;
   }

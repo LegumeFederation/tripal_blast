@@ -89,11 +89,11 @@ $no_hits = TRUE;
       if ($show_cvit_diagram) {
     ?>
       <!-- CViTjs image of BLAST hits, if enabled -->
-      <div class="cvitjs">
-        <div id="title-div"><h2>Whole Genome Visualization of BLAST hits</h2></div>
-        <div id="cvit-div"></div>
+      <div class="container" id="cvit-app">
+        <div class="row">
+          <div class="twelve columns" id="title-div"><h2>Whole Genome Visualization of BLAST hits</h2></div>
+        </div>
       </div>
-
     <?php
       }
     ?>

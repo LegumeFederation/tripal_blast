@@ -208,7 +208,7 @@ function run_BLAST_tripal_job($program, $query, $database, $output_filestub, $op
     tripal_report_error(
       'blast_ui',
       TRIPAL_ERROR,
-      "Unable to find the BLAST executable (ie: /urs/bin/blastn). This can be changed in the admin settings; you supplied: @command",
+      "Unable to find the BLAST executable (ie: /usr/bin/blastn). This can be changed in the admin settings; you supplied: @command",
       array('@command' => $program),
       array('print' => TRUE)
     );
@@ -221,7 +221,7 @@ function run_BLAST_tripal_job($program, $query, $database, $output_filestub, $op
     tripal_report_error(
       'blast_ui',
       TRIPAL_ERROR,
-      "Unable to find the BLAST Formatter executable (ie: /urs/bin/blast_formatter). This can be changed in the admin settings; you supplied: @command",
+      "Unable to find the BLAST Formatter executable (ie: /usr/bin/blast_formatter). This can be changed in the admin settings; you supplied: @command",
       array('@command' => $blast_formatter_command),
       array('print' => TRUE)
     );
@@ -344,24 +344,36 @@ function run_BLAST_tripal_job($program, $query, $database, $output_filestub, $op
  *
  */
 function validate_fasta_sequence($type, $sequence) {
-//drupal_set_message("FASTA is:<pre>$sequence</pre>");
   // Remove def lines
   $sequence = preg_replace('/\>.*\n/', '', $sequence);
-//drupal_set_message("FASTA without defs:<pre>$sequence</pre>");
 
   // Remove blank lines
   $sequence = preg_replace('/^[^>]\h*\v+/m', '', $sequence);
-//drupal_set_message("FASTA without blank lines:<pre>$sequence</pre>");
   
   //Includes IUPAC codes.
   $fastaSeqRegEx = ($type == 'nucleotide')
                    ? '/^[ATCGNUKMBVSWDYRHatcgnukmbvswdyrh\[\/\]\s\n\r]*$/'
-                   : '/^[ABCDEFGHIKLMNPQRSTUVWYZXabcdefghiklmnpqrstuvwyzx\*\-\s\n\r]*$/';
-  if ($sequence != '' && preg_match($fastaSeqRegEx, $sequence)) {
-    return true;
+                   : '/^[acdefghiklmnpqrstvwyACDEFGHIKLMNPQRSTVWY\*\-\s\n\r]*$/';
+  $defRegEx      = '/^>\S.*/';
+
+  // For each line of the sequence.
+  foreach (explode("\n", $sequence) as $line) {
+
+    // Is this a definition line?
+    if ($line[0] == '>') {
+      if (!preg_match($defRegEx, $line)) {
+        return FALSE;
+      }
+    }
+    // Otherwise it's a sequence line
+    else {
+      if (!preg_match($fastaSeqRegEx, $line)) {
+        return FALSE;
+      }
+    }
   }
 
-  return false;
+  return TRUE;
 }
 
 /**
@@ -891,7 +903,10 @@ function blast_ui_get_cvit_conf_text($genome_target = FALSE) {
   if ($cvit_conf) {
 
     // Retrieve the contents of the file.
-    $contents = file_get_contents($cvit_conf);
+    $contents = '';
+    if (file_exists($cvit_conf)) {
+      $contents = file_get_contents($cvit_conf);
+    }
 
     // If no genome target was provided then return the full file.
     if ($contents && $genome_target == FALSE) {
@@ -938,7 +953,6 @@ function blast_ui_get_cvit_conf_text($genome_target = FALSE) {
  *  The path to the CViTjs codebase.
  */
 function blast_ui_get_cvit_conf($cvitjs_location = NULL) {
-/*
   if (!$cvitjs_location) {
     $cvitjs_location = libraries_get_path('cvitjs') . DIRECTORY_SEPARATOR;
   }
@@ -946,6 +960,4 @@ function blast_ui_get_cvit_conf($cvitjs_location = NULL) {
   $cvit_conf_path = $cvitjs_location . 'cvit.conf';
 
   return $cvit_conf_path;
-*/
-  return DRUPAL_ROOT . '/sites/all/libraries/cvitjs/cvit.conf';
 }
